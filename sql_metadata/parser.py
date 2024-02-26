@@ -17,6 +17,7 @@ from sql_metadata.keywords_lists import (
     TokenType,
     RELEVANT_KEYWORDS,
     SUBQUERY_PRECEDING_KEYWORDS,
+    SUBQUERY_SUCCESSOR_KEYWORDS,
     SUPPORTED_QUERY_TYPES,
     TABLE_ADJUSTMENT_KEYWORDS,
     WITH_ENDING_KEYWORDS,
@@ -167,6 +168,11 @@ class Parser:  # pylint: disable=R0902
                 self._determine_closing_parenthesis_type(token=token)
                 if token.is_subquery_end:
                     last_keyword = self._preceded_keywords.pop()
+
+            if token.previous_token.is_left_parenthesis and token.previous_token.is_subquery_start and token.value in SUBQUERY_SUCCESSOR_KEYWORDS:
+                token.previous_token.is_subquery_start = True
+            else:
+                token.previous_token.is_subquery_start = False
 
             last_keyword = self._determine_last_relevant_keyword(
                 token=token, last_keyword=last_keyword
@@ -523,6 +529,16 @@ class Parser:  # pylint: disable=R0902
             return self._subqueries
         subqueries = {}
         token = self.tokens[0]
+
+        while token.next_token:
+            print(token)
+            print("Prev ", token.previous_token)
+            print("Next ", token.next_token)
+            print()
+
+            token = token.next_token
+
+        token = self.tokens[0]
         while token.next_token:
             if token.previous_token.is_subquery_start:
                 current_subquery = []
@@ -864,7 +880,7 @@ class Parser:  # pylint: disable=R0902
         """
         Determines the type of left parenthesis in query
         """
-        if token.previous_token.normalized in SUBQUERY_PRECEDING_KEYWORDS:
+        if token.previous_token.normalized in SUBQUERY_PRECEDING_KEYWORDS: # and token.next_token.normalized in SUBQUERY_SUCCESSOR_KEYWORDS:
             # inside subquery / derived table
             token.is_subquery_start = True
             self._subquery_level += 1

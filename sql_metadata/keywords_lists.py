@@ -15,6 +15,7 @@ KEYWORDS_BEFORE_COLUMNS = {
     "ON",
     "SET",
     "USING",
+    "KEY"
 }
 
 # normalized list of table preceding keywords
@@ -51,6 +52,11 @@ SUBQUERY_PRECEDING_KEYWORDS = {
     "LEFTOUTERJOIN",
     "RIGHTOUTERJOIN",
     "NATURALJOIN",
+    "="
+}
+
+SUBQUERY_SUCCESSOR_KEYWORDS = {
+    "SELECT"
 }
 
 # section of a query in which column can exists
