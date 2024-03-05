@@ -531,11 +531,6 @@ class Parser:  # pylint: disable=R0902
         token = self.tokens[0]
 
         while token.next_token:
-            print(token)
-            print("Prev ", token.previous_token)
-            print("Next ", token.next_token)
-            print()
-
             token = token.next_token
 
         token = self.tokens[0]
